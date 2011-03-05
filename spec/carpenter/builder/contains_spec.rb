@@ -37,7 +37,7 @@ describe Carpenter::Builder do
     end
 
     context "'with_' and 'for_' prefixed setters" do
-      it "should add setters for the passed part" do
+      it "should add setters for the passed parts" do
         user_builder_class.contains :name
         builder = user_builder_class.new
 
