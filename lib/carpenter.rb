@@ -1,3 +1,1 @@
-module Carpenter
-  # Your code goes here...
-end
+require 'carpenter/builder'
