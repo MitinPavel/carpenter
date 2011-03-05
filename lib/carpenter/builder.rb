@@ -8,6 +8,10 @@ module Carpenter
       self
     end
 
+    def but
+      raise NotImplementedError
+    end
+
     module ClassMethods
       def contains(*parts)
         parts.each do |part|
