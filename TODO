@@ -1,0 +1,2 @@
+# Move 'new_builder' and 'new_builder_class' helper methods to a separate file.
+# Move auxiliary classes (FakeBuilder and so on) to 'spec/support' folder.
