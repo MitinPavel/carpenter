@@ -3,7 +3,7 @@ require 'lib/carpenter/cucumber/builder_facade'
 require 'cucumber/ast/table'
 
 class User
-  attr_accessor :email, :first_name
+  attr_accessor :email, :first_name, :address
 
   def save!
   end
@@ -18,7 +18,11 @@ class UserBuilder
   contains :email, :first_name, :address
 
   def build
-    User.new
+    @product = User.new
+    @product.first_name = @first_name
+    @product.address = @address
+
+    @product
   end
 end
 
@@ -28,8 +32,13 @@ describe Carpenter::Cucumber::BuilderFacade do
     let(:facade) { Carpenter::Cucumber::BuilderFacade.new builder }
 
     it "should build a product" do
+      table = create_table <<-EOS
+                             | Email           | First Name |
+                             | jill@gemail.com | Jill       |
+                           EOS
       builder.should_receive :build!
-      facade.build default_table
+
+      facade.build table
     end
 
     it "should set attributes passed through a cucumber table" do
@@ -50,23 +59,24 @@ describe Carpenter::Cucumber::BuilderFacade do
                                     | Zipcode: 1234 |
                                   EOS
         address = Address.new
-        Address.should_receive(:find_by_zipcode).and_return address
+        Address.stub!(:find_by_zipcode).and_return address
+        builder.should_receive(:with_address).with address
   
         facade.build user_table
       end
 
-      it "shouldn't take inot account semicolons if there is no appropriate ruby class"
+      it "should cope with an attribute if its value looks like an association value (contains a colon)" do
+        user_table = create_table <<-EOS
+                                    | First Name    |
+                                    | Weird: name   |
+                                  EOS
+        builder.should_receive(:with_first_name).with "Weird: name"
+
+        facade.build user_table
+      end
+
       it "should take into account namespaces"
     end
-
-  end
-
-  def default_table
-    create_table <<-EOS
-                   | Email           | First Name |
-                   | john@gemail.com | John      |
-                   | jill@gemail.com | Jill      |
-                 EOS
   end
 
   def create_table(table_string)

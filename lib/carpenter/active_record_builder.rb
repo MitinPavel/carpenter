@@ -11,6 +11,7 @@ module Carpenter
     def build!
       product = build
       product.save!
+      product
     end
   end
 end
