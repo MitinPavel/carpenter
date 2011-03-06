@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'lib/carpenter/cucumber_step_helpers'
+require 'lib/carpenter/cucumber/step_helpers'
 require 'cucumber/ast/table'
 
 describe Carpenter::CucumberStepHelpers do
