@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'lib/carpenter/cucumber/step_helpers'
+require 'lib/carpenter/cucumber/builder_facade'
 require 'cucumber/ast/table'
 
-describe Carpenter::CucumberStepHelpers do
+describe Carpenter::Cucumber::BuilderFacade do
   it "should just work" do
     user_table = create_table <<-EOS
       | Email  | Firstname |
