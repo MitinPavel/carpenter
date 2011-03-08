@@ -1,11 +1,7 @@
+require 'carpenter/cucumber/association_resolver'
+
 module Carpenter
   module Cucumber
-    class AssociationResolver
-      def resolve(clazz, attr_name, attr_value)
-        clazz.send "find_by_#{attr_name}", attr_value
-      end
-    end
-
     class RowMapper
       def process
         association? ?  process_association : process_attribute
@@ -46,22 +42,17 @@ module Carpenter
       end
 
       def process_association
-        clazz = constantize @key
-        raw_attr_name, attr_value = @value.split /:\s+/
-        attr_name = attributize raw_attr_name
-        object = clazz.send "find_by_#{attr_name}", attr_value
-
-        return [process_key, object] if object
+        clazz, attr_name, attr_value = infer_association_data
+        association = @association_resolver.find_or_create clazz, attr_name, attr_value
+        return [process_key, association]
       end
 
-      def process_association
+      def infer_association_data
         clazz = constantize @key
         raw_attr_name, attr_value = @value.split /:\s+/
         attr_name = attributize raw_attr_name
 
-        #TODO provide AssociationDTO :)
-        association = @association_resolver.resolve clazz, attr_name, attr_value
-        return [process_key, association]
+        [clazz, attr_name, attr_value]
       end
 
       def attributize(string)
