@@ -19,7 +19,7 @@ module Carpenter
       end
 
       def class_exists?
-        constantize @key
+        StringHelper.constantize @key
       rescue NameError
         false
       end
@@ -48,7 +48,7 @@ module Carpenter
       end
 
       def infer_association_data
-        clazz = constantize @key
+        clazz = StringHelper.constantize @key
         raw_attr_name, attr_value = @value.split /:\s+/
         attr_name = attributize raw_attr_name
 
@@ -57,18 +57,6 @@ module Carpenter
 
       def attributize(string)
         string.gsub(/\s+/, '_').downcase
-      end
-
-      # http://api.rubyonrails.org/classes/ActiveSupport/Inflector.html
-      def constantize(camel_cased_word)
-        names = camel_cased_word.split('::')
-        names.shift if names.empty? || names.first.empty?
-
-        constant = Object
-        names.each do |name|
-          constant = constant.const_defined?(name) ? constant.const_get(name) : constant.const_missing(name)
-        end
-        constant
       end
     end
   end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'lib/carpenter/cucumber/builder_facade'
 require 'cucumber/ast/table'
-require 'spec/support/auxiliary_classes'
 
 describe Carpenter::Cucumber::BuilderFacade do
   describe "#build" do

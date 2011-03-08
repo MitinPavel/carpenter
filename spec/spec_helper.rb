@@ -6,11 +6,4 @@ require 'carpenter'
 RSpec.configure do |config|
 end
 
-def new_builder_class
-  builder_class = Class.new
-  builder_class.send :include, Carpenter::Builder
-end
-
-def new_builder
-  new_builder_class.new
-end
+Dir["spec/support/**/*.rb"].each {|f| require f}

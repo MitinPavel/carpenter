@@ -1,3 +1,5 @@
+require 'lib/carpenter/cucumber/string_helper'
+
 module Carpenter
   module Cucumber
     class AssociationResolver
@@ -9,9 +11,10 @@ module Carpenter
       private
 
       def create(clazz, attr_name, attr_value)
-        user = User.new
-        user.first_name = 'Jill'
-        user
+        builder_class = StringHelper.constantize "#{clazz.name}Builder"
+        builder = builder_class.new
+        builder.send "with_#{attr_name}", attr_value #TODO respond_to?
+        builder.build
       end
     end
   end
