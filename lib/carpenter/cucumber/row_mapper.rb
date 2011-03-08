@@ -1,5 +1,11 @@
 module Carpenter
   module Cucumber
+    class AssociationResolver
+      def resolve(clazz, attr_name, attr_value)
+        clazz.send "find_by_#{attr_name}", attr_value
+      end
+    end
+
     class RowMapper
       def process
         association? ?  process_association : process_attribute
@@ -7,8 +13,9 @@ module Carpenter
 
       private
 
-      def initialize(key, value)
+      def initialize(key, value, association_resolver)
         @key, @value = key, value
+        @association_resolver = association_resolver
       end
 
       def association?
@@ -45,6 +52,16 @@ module Carpenter
         object = clazz.send "find_by_#{attr_name}", attr_value
 
         return [process_key, object] if object
+      end
+
+      def process_association
+        clazz = constantize @key
+        raw_attr_name, attr_value = @value.split /:\s+/
+        attr_name = attributize raw_attr_name
+
+        #TODO provide AssociationDTO :)
+        association = @association_resolver.resolve clazz, attr_name, attr_value
+        return [process_key, association]
       end
 
       def attributize(string)

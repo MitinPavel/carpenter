@@ -6,8 +6,7 @@ module Carpenter
       def build(table)
         table.hashes.each do |row|
           row.each_pair do |key, value|
-            setter, argument = RowMapper.new(key, value).process
-            @builder.send setter, argument
+            process_row key, value
           end
         end
 
@@ -16,8 +15,15 @@ module Carpenter
 
       private
 
-      def initialize(builder)
+      def initialize(builder, association_resolver)
         @builder = builder
+        @association_resolver = association_resolver
+      end
+
+      def process_row(key, value)
+        row_mapper = RowMapper.new key, value, @association_resolver
+        setter, argument = row_mapper.process
+        @builder.send setter, argument
       end
     end
   end

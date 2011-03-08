@@ -29,7 +29,8 @@ end
 describe Carpenter::Cucumber::BuilderFacade do
   describe "#build" do
     let(:builder) { UserBuilder.new }
-    let(:facade) { Carpenter::Cucumber::BuilderFacade.new builder }
+    let(:association_resolver) { Carpenter::Cucumber::AssociationResolver.new }
+    let(:facade) { Carpenter::Cucumber::BuilderFacade.new builder, association_resolver }
 
     it "should build a product" do
       table = create_table <<-EOS
@@ -65,6 +66,21 @@ describe Carpenter::Cucumber::BuilderFacade do
         facade.build user_table
       end
 
+      #it "should create an object for an association if the object hasn't been created yet" do
+      #  user_table = create_table <<-EOS
+      #                              | Address       |
+      #                              | Zipcode: 1234 |
+      #                            EOS
+      #  Address.stub!(:find_by_zipcode).and_return nil
+      #  address_builder = AddressBuilder.new
+      #  address_builder.should_receive(:with_zipcode).with '1234'
+      #  address = Address.new
+      #  address_builder.should_receive(:build!).and_return address
+      #  builder.should_receive(:with_address).with address
+  
+      #  facade.build user_table
+      #end
+
       it "should cope with an attribute if its value looks like an association value (contains a colon)" do
         user_table = create_table <<-EOS
                                     | First Name    |
@@ -76,6 +92,7 @@ describe Carpenter::Cucumber::BuilderFacade do
       end
 
       it "should take into account namespaces"
+
     end
   end
 
